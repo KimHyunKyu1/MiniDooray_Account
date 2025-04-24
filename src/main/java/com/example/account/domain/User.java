@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.EntityGraph;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Table(name = "users")
 public class User {

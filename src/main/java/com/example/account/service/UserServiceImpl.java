@@ -6,12 +6,12 @@ import com.example.account.repository.StatusRepository;
 import com.example.account.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+@Slf4j
 @Service
-@Transactional
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -22,14 +22,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserView registerUser(UserCreateCommand command) {
+
         try {
+
             User user = new User(command.getUserId(),
                     command.getPassword(),
                     command.getEmail(),
                     command.getStatus());
             System.out.println(user.getUserId());
             userRepository.save(user);
-            return userRepository.queryUserByUserId(command.getUserId());
+
+            userRepository.flush();
+            System.out.println(user.getUserId());
+            UserView userView = userRepository.queryUserByUserId(command.getUserId());
+            return userView;
         } catch (Exception e) {
             return null;
         }

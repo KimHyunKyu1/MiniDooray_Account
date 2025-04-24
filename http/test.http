@@ -2,10 +2,11 @@ POST localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "id": "user1",
-  "password": "password",
   "email": "user1@gmail.com",
+  "password": "password",
   "status": {
     "status": "REGISTERED"
-  }
+  },
+  "userId": "user52"
+
 }
