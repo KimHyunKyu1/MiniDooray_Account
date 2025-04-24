@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:mysql://s4.java21.net:13306/nhn_academy_107
+    username: nhn_academy_107
+    password: uS6erwkb!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        highlight_sql: true
+        auto_quote_keyword: true
+        ddl-auto: update
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true # 데이터 소스 초기화를 지연시킵니다. 이는 JPA 엔티티를 데이터베이스 스키마 생성 후에 초기화하도록 해, 데이터베이스 초기화 스크립트 실행에 유리합니다.
+
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace
+    org.springframework.transaction.interceptor: trace
+
+
