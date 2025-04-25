@@ -5,4 +5,4 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
-public record UserUpdateRequest(String userId, String status) {}
+public record UserUpdateRequest(String userId, Status status) {}

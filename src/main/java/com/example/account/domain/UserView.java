@@ -6,5 +6,5 @@ public interface UserView {
     String getUserId();
 
     String getEmail();
-    String getStatus();
+    Status getStatus();
 }

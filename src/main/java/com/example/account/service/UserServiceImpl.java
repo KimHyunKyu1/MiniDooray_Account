@@ -17,10 +17,12 @@ public class UserServiceImpl implements UserService {
 
 
     private final UserRepository userRepository;
+    private final StatusRepository statusRepository;
 
 
 
     @Override
+    @Transactional
     public UserView registerUser(UserCreateCommand command) {
 
         try {
@@ -52,9 +54,16 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
+    @Transactional
     @Override
     public UserView updateUser(UserUpdateRequest userUpdateRequest) {
-        userRepository.updateByUserIdStatus(userUpdateRequest.userId(), userUpdateRequest.status());
+        // 유저의 status 정의
+        String statusStr = userUpdateRequest.status().getStatus();
+        // Status가 존재하는 지 검증 -삭제가능
+        if (statusRepository.findAllByStatus(statusStr).isEmpty()) {
+            throw new IllegalArgumentException("Invalid status value: " + statusStr);
+        }
+        userRepository.updateByUserIdStatus(userUpdateRequest.userId(), statusStr);
         return userRepository.findByUserId(userUpdateRequest.userId());
     }
 }

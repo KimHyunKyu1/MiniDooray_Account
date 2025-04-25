@@ -13,13 +13,17 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    UserView queryUserByUserId(String userId);
-    UserView findByUserId(@NotNull String userId);
+    @Query("select u from User u where u.userId = :userId")
+    UserView queryUserByUserId(@Param("userId") String userId);
+
+    @Query("select u from User u where u.userId = :userId")
+    UserView findByUserId(@NotNull @Param("userId") String userId);
 
     User readByUserId(@NotNull String userId);
 
-
     @Modifying
-    @Query("update User u set u.status = :status where u.userId = :userId ")
+    @Transactional
+    @Query("update User u set u.status = (select s from Status s where s.status = :status) where u.userId = :userId")
     void updateByUserIdStatus(@Param("userId") String userId, @Param("status") String status);
+
 }

@@ -1,3 +1,5 @@
+
+### 유저 생성
 POST localhost:8080/api/users
 Content-Type: application/json
 
@@ -7,6 +9,25 @@ Content-Type: application/json
   "status": {
     "status": "REGISTERED"
   },
-  "userId": "user52"
+  "userId": "1user5120"
+}
+
+### 유저 수정
+PUT localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "userId": "1user5120",
+  "status": {
+    "status": "DORMANT"
+  }
+}
+
+### 유저 삭제
+DELETE localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "userId": "1user5120"
 }
 
