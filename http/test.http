@@ -9,7 +9,7 @@ Content-Type: application/json
   "status": {
     "status": "REGISTERED"
   },
-  "userId": "1user5120"
+  "userId": "user210"
 }
 
 ### 유저 수정
@@ -17,7 +17,7 @@ PUT localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "userId": "1user5120",
+  "userId": "user210",
   "status": {
     "status": "DORMANT"
   }
@@ -28,6 +28,6 @@ DELETE localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "userId": "1user5120"
+  "userId": "user210"
 }
 

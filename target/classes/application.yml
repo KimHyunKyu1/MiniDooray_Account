@@ -14,9 +14,6 @@ spring:
         highlight_sql: true
         auto_quote_keyword: true
         ddl-auto: update
-    hibernate:
-      ddl-auto: create-drop
-    defer-datasource-initialization: true # 데이터 소스 초기화를 지연시킵니다. 이는 JPA 엔티티를 데이터베이스 스키마 생성 후에 초기화하도록 해, 데이터베이스 초기화 스크립트 실행에 유리합니다.
 
 
 logging:
