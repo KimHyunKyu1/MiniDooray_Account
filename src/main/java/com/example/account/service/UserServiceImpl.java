@@ -20,7 +20,6 @@ public class UserServiceImpl implements UserService {
     private final StatusRepository statusRepository;
 
 
-
     @Override
     @Transactional
     public UserView registerUser(UserCreateCommand command) {
@@ -66,16 +65,19 @@ public class UserServiceImpl implements UserService {
         userRepository.updateByUserIdStatus(userUpdateRequest.userId(), statusStr);
         return userRepository.findByUserId(userUpdateRequest.userId());
     }
+
+    @Override
+    public UserLoginRequest matchUserLoginRequest(UserLoginRequest userLoginRequest) {
+        User user = userRepository.matchUserLoginRequest_UserId_Password(userLoginRequest);
+        if (user != null) {
+            return userLoginRequest;
+        }
+        return null;
+    }
+
 }
 
-//    @Override
-//    public UserLoginRequest matchUserLoginRequest(UserLoginRequest userLoginRequest) {
-//        Optional<UserLoginRequest> user = userRepository.matchUserLoginRequest_UserId_Password(userLoginRequest.getUserId(), userLoginRequest.getPassword());
-//        if (user.isEmpty()) {
-//            throw new UserNotFoundException("User not found");
-//        }
-//        return user.orElse(null);
-//    }
+
 //
 //    @Override
 //    public UserCreateCommand matchUserCreateCommand(UserCreateCommand userCreateCommand) {

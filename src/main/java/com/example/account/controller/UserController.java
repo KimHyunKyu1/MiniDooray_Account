@@ -5,6 +5,7 @@ import com.example.account.domain.UserLoginRequest;
 import com.example.account.domain.UserUpdateRequest;
 import com.example.account.domain.UserView;
 import com.example.account.service.UserServiceImpl;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserServiceImpl userServiceimpl;
-//
-//    @GetMapping
-//    public UserLoginRequest matchUserLoginRequest(@RequestParam UserLoginRequest userLoginRequest) {
-//        return userServiceimpl.matchUserLoginRequest(userLoginRequest);
-//    }
+
 //
 //    @GetMapping
 //    public UserCreateCommand matchUserCreateCommand(@RequestBody UserCreateCommand userCreateCommand) {
@@ -26,7 +23,7 @@ public class UserController {
 //    }
 
     @PostMapping
-    public UserView registerUserCreateCommand(@RequestBody UserCreateCommand userCreateCommand) {
+    public UserView registerUserCreateCommand(@Valid @RequestBody UserCreateCommand userCreateCommand) {
         return userServiceimpl.registerUser(userCreateCommand);
     }
 
@@ -38,6 +35,11 @@ public class UserController {
     @DeleteMapping
     public void deleteUser(@RequestBody UserCreateCommand userCreateCommand) {
         userServiceimpl.deleteUser(userCreateCommand.getUserId());
+    }
+
+    @PostMapping("/login")
+    public UserLoginRequest loginRequestUser(@Valid @RequestBody UserLoginRequest userLoginRequest) {
+        return userServiceimpl.matchUserLoginRequest(userLoginRequest);
     }
 
 }
