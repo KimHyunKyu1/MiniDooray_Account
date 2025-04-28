@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +33,9 @@ public class UserServiceTest {
     @InjectMocks
     private UserServiceImpl userService;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private UserCreateCommand userCreateCommand;
     private UserUpdateRequest userUpdateRequest;
     private UserLoginRequest userLoginRequest;
@@ -43,7 +48,7 @@ public class UserServiceTest {
         status = new Status("REGISTERED");
         userCreateCommand = new UserCreateCommand("user11", "password123", "user11@example.com", status);
         userUpdateRequest = new UserUpdateRequest("user11", status);
-        userLoginRequest = new UserLoginRequest("user11", "password123");
+        userLoginRequest = new UserLoginRequest("user11", "password");
         user = new User("user11", "encodedPassword", "user11@example.com", status);
         userView = new UserView() {
             @Override
@@ -65,6 +70,7 @@ public class UserServiceTest {
     @DisplayName("유저 등록 성공")
     void testRegisterUserSuccess() {
         // Given
+        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(userRepository.queryUserByUserId("user11")).thenReturn(userView);
 
@@ -76,8 +82,8 @@ public class UserServiceTest {
         assertEquals("user11", result.getUserId());
         assertEquals("user11@example.com", result.getEmail());
         assertEquals("REGISTERED", result.getStatus().getStatus());
+        verify(passwordEncoder).encode("password123");
         verify(userRepository).save(any(User.class));
-        verify(userRepository).flush();
         verify(userRepository).queryUserByUserId("user11");
     }
 
@@ -88,11 +94,8 @@ public class UserServiceTest {
         // Given
         when(userRepository.save(any(User.class))).thenThrow(new RuntimeException("Database error"));
 
-        // When
-        UserView result = userService.registerUser(userCreateCommand);
-
-        // Then
-        assertNull(result);
+        // When & Then
+        assertThrows(RuntimeException.class, () -> userService.registerUser(userCreateCommand));
         verify(userRepository).save(any(User.class));
         verify(userRepository, never()).queryUserByUserId(anyString());
     }
@@ -159,35 +162,37 @@ public class UserServiceTest {
     @DisplayName("유저 로그인 성공")
     void testMatchUserLoginRequestSuccess() {
         // Given
-        when(userRepository.matchUserLoginRequest_UserId_Password(userLoginRequest)).thenReturn(user);
-        when(userRepository.queryUserByUserId("user11")).thenReturn(userView);
+
+
+        when(userRepository.GetUserByUserId("user11")).thenReturn(user);
+        when(passwordEncoder.matches("password", "encodedPassword")).thenReturn(true);
+        when(userRepository.findByUserId("user11")).thenReturn(userView);
 
         // When
         UserView result = userService.matchUserLoginRequest(userLoginRequest);
-
         // Then
         assertNotNull(result);
         assertEquals("user11", result.getUserId());
         assertEquals("user11@example.com", result.getEmail());
         assertEquals("REGISTERED", result.getStatus().getStatus());
-        verify(userRepository).matchUserLoginRequest_UserId_Password(userLoginRequest);
-        verify(userRepository).queryUserByUserId("user11");
+        verify(userRepository).GetUserByUserId("user11");
+        verify(passwordEncoder).matches("password", "encodedPassword");
+        verify(userRepository).findByUserId("user11");
     }
 
     @Test
-    @DisplayName("유저 로그인 실패 - 잘못된 자격 증명")
-    void testMatchUserLoginRequestFailure() {
+    @DisplayName("유저 로그인 실패 - 사용자 없음")
+    void testMatchUserLoginRequestFailure_UserNotFound() {
         // Given
-        when(userRepository.matchUserLoginRequest_UserId_Password(userLoginRequest)).thenReturn(null);
-        when(userRepository.queryUserByUserId("user11")).thenReturn(null);
+        when(userRepository.GetUserByUserId("user11")).thenReturn(null);
 
-        // When
-        UserView result = userService.matchUserLoginRequest(userLoginRequest);
-
-        // Then
-        assertNull(result);
-        verify(userRepository).matchUserLoginRequest_UserId_Password(userLoginRequest);
-        verify(userRepository).queryUserByUserId("user11");
+        // When & Then
+        assertThrows(NullPointerException.class, () -> userService.matchUserLoginRequest(userLoginRequest));
+        verify(userRepository).GetUserByUserId("user11");
+        verify(passwordEncoder, never()).matches(anyString(), anyString());
+        verify(userRepository, never()).findByUserId("user11");
     }
+
+
 }
 

@@ -27,9 +27,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void updateByUserIdStatus(@Param("userId") String userId, @Param("status") String status);
 
     @Query("SELECT u FROM User u WHERE u.userId = :#{#request.userId} AND u.password = :#{#request.password}")
-    User matchUserLoginRequest_UserId_Password(@Param("request") UserLoginRequest userLoginRequest);
+    UserView matchUserLoginRequest_UserId_Password(@Param("request") UserLoginRequest userLoginRequest);
 
-
+    @Query("select u from User u where u.userId = :userId")
+    User GetUserByUserId(@NotNull @Param("userId") String userId);
 
 
 }

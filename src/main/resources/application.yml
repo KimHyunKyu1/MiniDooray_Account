@@ -1,15 +1,9 @@
 spring:
   datasource:
-#    url: jdbc:h2:mem:testdb  # H2 데이터베이스 URL (임베디드 메모리 데이터베이스 사용)
-#    driver-class-name: org.h2.Driver
-#    username: sa
-#    hikari:
-#      maximum-pool-size: 10  # 연결 풀 크기 (필요에 따라 조정)
     url: jdbc:mysql://s4.java21.net:13306/nhn_academy_107
     username: nhn_academy_107
     password: uS6erwkb!
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     open-in-view: false
     show-sql: true
@@ -22,14 +16,11 @@ spring:
     hibernate:
       ddl-auto: update
     defer-datasource-initialization: true # 데이터 소스 초기화를 지연시킵니다. 이는 JPA 엔티티를 데이터베이스 스키마 생성 후에 초기화하도록 해, 데이터베이스 초기화 스크립트 실행에 유리합니다.
-  h2:
-    console:
-      enabled: true
-
 
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
     org.springframework.transaction.interceptor: trace
-
+server:
+  port: 8081
 

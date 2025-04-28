@@ -6,8 +6,14 @@ import com.example.account.repository.StatusRepository;
 import com.example.account.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+@Slf4j
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -15,27 +21,24 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final StatusRepository statusRepository;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public UserView registerUser(UserCreateCommand command) {
 
-        try {
+        String rawPw = command.getPassword();
+        String encodedPw = passwordEncoder.encode(rawPw);
 
-            User user = new User(command.getUserId(),
-                    command.getPassword(),
-                    command.getEmail(),
-                    command.getStatus());
-            userRepository.save(user);
+        User user = new User(
+                command.getUserId(),
+                encodedPw,
+                command.getEmail(),
+                command.getStatus()
+        );
+        userRepository.save(user);
 
-            userRepository.flush();
-            UserView userView = userRepository.queryUserByUserId(command.getUserId());
-            return userView;
-        } catch (Exception e) {
-            return null;
-        }
-
+        return userRepository.queryUserByUserId(user.getUserId());
     }
 
 
@@ -51,9 +54,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserView updateUser(UserUpdateRequest userUpdateRequest) {
-        // 유저의 status 정의
         String statusStr = userUpdateRequest.status().getStatus();
-        // Status 존재하는 지 검증 -삭제가능
         if (statusRepository.findAllByStatus(statusStr).isEmpty()) {
             throw new IllegalArgumentException("Invalid status value: " + statusStr);
         }
@@ -62,13 +63,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserView matchUserLoginRequest(UserLoginRequest userLoginRequest) {
-        User user = userRepository.matchUserLoginRequest_UserId_Password(userLoginRequest);
-        UserView userView = userRepository.queryUserByUserId(userLoginRequest.getUserId());
-        if (user != null) {
-            return userView;
+    public UserView matchUserLoginRequest(UserLoginRequest loginReq) {
+        User user = userRepository.GetUserByUserId(loginReq.getUserId());
+
+
+        if (!passwordEncoder.matches(loginReq.getPassword(), user.getPassword())) {
+            throw new BadCredentialsException("password incorrect");
         }
-        return null;
+
+        return userRepository.findByUserId(loginReq.getUserId());
     }
 
 }

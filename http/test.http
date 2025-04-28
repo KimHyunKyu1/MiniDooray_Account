@@ -1,19 +1,19 @@
 
 ### 유저 생성
-POST localhost:8080/api/users
+POST localhost:8081/api/users
 Content-Type: application/json
 
 {
   "email": "user123@gmail.com",
   "password": "password",
   "status": {
-    "status": "WITHDRAWN"
+    "status": "REGISTERED"
   },
-  "userId": "user123"
+  "userId": "user21201"
 }
 
 ### 유저 수정
-PUT localhost:8080/api/users
+PUT localhost:8081/api/users
 Content-Type: application/json
 
 {
@@ -24,18 +24,27 @@ Content-Type: application/json
 }
 
 ### 유저 삭제
-DELETE localhost:8080/api/users
+DELETE localhost:8081/api/users
 Content-Type: application/json
 
 {
-  "userId": "user12"
+  "userId": "user210"
 }
 
-### 유저 로그인 검증
-POST localhost:8080/api/users/login
+### 로그인 검증
+POST localhost:8081/api/users/login
 Content-Type: application/json
 
 {
-  "userId": "user2101",
+  "userId": "user2120",
+  "password": "password"
+}
+
+### 로그인 검증
+POST localhost:8081/api/users/login
+Content-Type: application/json
+
+{
+  "userId": "test1",
   "password": "password"
 }

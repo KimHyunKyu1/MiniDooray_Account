@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -140,8 +139,8 @@ public class UserControllerTest {
 
             // When
             mockMvc.perform(put("/api/users")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(requestJson));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestJson));
 
         } catch (UserNotFoundException | ServletException e) {
             // Then
@@ -179,8 +178,8 @@ public class UserControllerTest {
 
             // When
             mockMvc.perform(delete("/api/users")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(requestJson));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestJson));
 
 
         } catch (UserNotFoundException | ServletException e) {
@@ -216,8 +215,8 @@ public class UserControllerTest {
 
         // When
         mockMvc.perform(post("/api/users/login")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(requestJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
 
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
