@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping ("/api/users")
@@ -33,12 +35,13 @@ public class UserController {
     }
 
     @DeleteMapping
-    public void deleteUser(@RequestBody UserCreateCommand userCreateCommand) {
+    public boolean deleteUser(@RequestBody UserCreateCommand userCreateCommand) {
         userServiceimpl.deleteUser(userCreateCommand.getUserId());
+        return !Objects.isNull(userCreateCommand.getUserId());
     }
 
     @PostMapping("/login")
-    public UserLoginRequest loginRequestUser(@Valid @RequestBody UserLoginRequest userLoginRequest) {
+    public UserView loginRequestUser(@Valid @RequestBody UserLoginRequest userLoginRequest) {
         return userServiceimpl.matchUserLoginRequest(userLoginRequest);
     }
 

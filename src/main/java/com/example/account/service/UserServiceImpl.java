@@ -67,10 +67,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserLoginRequest matchUserLoginRequest(UserLoginRequest userLoginRequest) {
+    public UserView matchUserLoginRequest(UserLoginRequest userLoginRequest) {
         User user = userRepository.matchUserLoginRequest_UserId_Password(userLoginRequest);
+        UserView userView = userRepository.queryUserByUserId(userLoginRequest.getUserId());
         if (user != null) {
-            return userLoginRequest;
+            return userView;
         }
         return null;
     }

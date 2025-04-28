@@ -10,7 +10,7 @@ public interface UserService {
 
     public UserView updateUser(UserUpdateRequest userUpdateRequest);
 
-    public UserLoginRequest matchUserLoginRequest(UserLoginRequest userLoginRequest);
+    public UserView matchUserLoginRequest(UserLoginRequest userLoginRequest);
 
 
 }
