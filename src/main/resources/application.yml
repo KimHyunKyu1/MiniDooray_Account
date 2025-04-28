@@ -1,15 +1,14 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb  # H2 데이터베이스 URL (임베디드 메모리 데이터베이스 사용)
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: password
-    hikari:
-      maximum-pool-size: 10  # 연결 풀 크기 (필요에 따라 조정)
-#    url: jdbc:mysql://s4.java21.net:13306/nhn_academy_107
-#    username: nhn_academy_107
-#    password: uS6erwkb!
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:h2:mem:testdb  # H2 데이터베이스 URL (임베디드 메모리 데이터베이스 사용)
+#    driver-class-name: org.h2.Driver
+#    username: sa
+#    hikari:
+#      maximum-pool-size: 10  # 연결 풀 크기 (필요에 따라 조정)
+    url: jdbc:mysql://s4.java21.net:13306/nhn_academy_107
+    username: nhn_academy_107
+    password: uS6erwkb!
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     open-in-view: false

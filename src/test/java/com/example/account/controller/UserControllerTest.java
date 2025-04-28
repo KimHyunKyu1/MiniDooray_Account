@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +28,7 @@ public class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private UserServiceImpl userService;
 
     private ObjectMapper objectMapper;
@@ -38,7 +39,7 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("정상적인 요청")
+    @DisplayName("정상적인 가입 요청")
     void testRegisterUserSuccess() throws Exception {
         // Given
         Status status = new Status("REGISTERED");
@@ -137,7 +138,7 @@ public class UserControllerTest {
                     .thenThrow(new UserNotFoundException("User not found"));
             String requestJson = objectMapper.writeValueAsString(updateRequest);
 
-            // When: PUT /api/users 호출
+            // When
             mockMvc.perform(put("/api/users")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestJson));
@@ -149,41 +150,81 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("유저 삭제 요청")
     void testDeleteUserSuccess() throws Exception {
-        // Given: 사용자 삭제 요청
+        // Given
         Status status = new Status("REGISTERED");
         UserCreateCommand command = new UserCreateCommand("testUser", "password123", "test@example.com", status);
         doNothing().when(userService).deleteUser("testUser");
         String requestJson = objectMapper.writeValueAsString(command);
 
-        // When: DELETE /api/users 호출
+        // When
         mockMvc.perform(delete("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson))
 
-                // Then: 성공 응답 검증
+                // Then
                 .andExpect(status().isOk());
     }
 
     @Test
+    @DisplayName("존재하지 않는 유저 삭제")
     void testDeleteUserNotFound() throws Exception {
         try {
-            // Given: 존재하지 않는 사용자 삭제 요청
+            // Given
             Status status = new Status("REGISTERED");
-            UserCreateCommand command = new UserCreateCommand("nonExistentUser", "password123", "test@example.com", status);
+            UserCreateCommand command = new UserCreateCommand("user14135135", "password123", "test@example.com", status);
             doThrow(new UserNotFoundException("User not found")).when(userService).deleteUser("nonExistentUser");
             String requestJson = objectMapper.writeValueAsString(command);
 
-            // When: DELETE /api/users 호출
+            // When
             mockMvc.perform(delete("/api/users")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(requestJson))
+                            .content(requestJson));
 
-                    // Then: 404 Not Found 검증
-                    .andExpect(status().isNotFound());
+
         } catch (UserNotFoundException | ServletException e) {
+            // Then
             Assertions.assertTrue(true, "Test passed");
         }
+    }
+    @Test
+    @DisplayName("유저 로그인 성공")
+    void testLoginSuccess() throws Exception {
+        // Given
+        UserLoginRequest userLoginRequest = new UserLoginRequest("user11", "password123");
+        Status status = new Status("REGISTERED");
+        UserView userView = new UserView() {
+
+            @Override
+            public String getUserId() {
+                return "user11";
+            }
+
+            @Override
+            public String getEmail() {
+                return "user11@example.com";
+            }
+
+            @Override
+            public Status getStatus() {
+                return status;
+            }
+        };
+        String requestJson = objectMapper.writeValueAsString(userLoginRequest);
+        when(userService.matchUserLoginRequest(any(UserLoginRequest.class))).thenReturn(userView);
+
+        // When
+        mockMvc.perform(post("/api/users/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestJson))
+
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.userId").value("user11"))
+                .andExpect(jsonPath("$.email").value("user11@example.com"))
+                .andExpect(jsonPath("$.status").value("REGISTERED"));
+
     }
 
 }

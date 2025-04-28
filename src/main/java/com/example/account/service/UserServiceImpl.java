@@ -6,11 +6,8 @@ import com.example.account.repository.StatusRepository;
 import com.example.account.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-@Slf4j
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -30,11 +27,9 @@ public class UserServiceImpl implements UserService {
                     command.getPassword(),
                     command.getEmail(),
                     command.getStatus());
-            System.out.println(user.getUserId());
             userRepository.save(user);
 
             userRepository.flush();
-            System.out.println(user.getUserId());
             UserView userView = userRepository.queryUserByUserId(command.getUserId());
             return userView;
         } catch (Exception e) {
@@ -58,7 +53,7 @@ public class UserServiceImpl implements UserService {
     public UserView updateUser(UserUpdateRequest userUpdateRequest) {
         // 유저의 status 정의
         String statusStr = userUpdateRequest.status().getStatus();
-        // Status가 존재하는 지 검증 -삭제가능
+        // Status 존재하는 지 검증 -삭제가능
         if (statusRepository.findAllByStatus(statusStr).isEmpty()) {
             throw new IllegalArgumentException("Invalid status value: " + statusStr);
         }

@@ -4,12 +4,12 @@ POST localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "email": "user1@gmail.com",
+  "email": "user123@gmail.com",
   "password": "password",
   "status": {
-    "status": "REGISTERED"
+    "status": "WITHDRAWN"
   },
-  "userId": "user210"
+  "userId": "user123"
 }
 
 ### 유저 수정
@@ -28,14 +28,14 @@ DELETE localhost:8080/api/users
 Content-Type: application/json
 
 {
-  "userId": "user210"
+  "userId": "user12"
 }
 
-### 로그인 검증
+### 유저 로그인 검증
 POST localhost:8080/api/users/login
 Content-Type: application/json
 
 {
-  "userId": "user2120",
+  "userId": "user2101",
   "password": "password"
 }
